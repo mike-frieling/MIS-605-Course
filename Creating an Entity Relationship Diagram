@@ -1,4 +1,44 @@
 --SQL Server - AdventureWorks 2014 Database
 
 
+--Create a temporary table for each of the Topic 4 assignment data components.
 
+---#MyProduct - Find the product ID for the LL Road Frame – Black 60
+SELECT ProductID, name
+INTO #MyProduct
+FROM Production.Product
+WHERE name = 'LL Road Frame - Black, 60'
+
+SELECT *
+FROM #MyProduct
+
+---#MyPriceHistory - Find the listing price of the LL Road Frame – Black 60. Display ProductID, EndDate, and ListPrice.
+SELECT pp.ProductID, pc.EndDate, pp.ListPrice
+INTO #MyPriceHistory
+FROM Production.Product pp, Production.ProductCostHistory pc
+WHERE pp.ProductID = '723' and pp.productID = pc.ProductID and EndDate IS NOT NULL
+
+SELECT *
+FROM #MyPriceHistory
+
+---#MySalesOrderDetail - How many orders have been placed for LL Road Frame – Black 60?
+SELECT ProductID, SalesOrderID, SUM(OrderQTY) as Quantity
+INTO #MySalesOrderDetail
+FROM Sales.SalesOrderDetail
+WHERE ProductID = '723'
+GROUP BY ProductID, SalesOrderID
+
+SELECT *
+FROM #MySalesOrderDetail
+
+--Use the skills you have learned and practice writing a query to determine the dates of each sales orders from a table you have not looked at yet.
+--Create a temporary table called #AllSalesOrderDates for this information.
+
+SELECT pp.ProductID, sh.SalesOrderID, sh.OrderDate
+INTO #AllSalesOrderDates
+FROM Production.Product pp, Sales.SalesOrderHeader sh
+WHERE ProductID = '723'
+
+SELECT *
+FROM #AllSalesOrderDates
+ORDER BY OrderDate
