@@ -1,1 +1,58 @@
+--SQL Server - AdventureWorks 2014 Database
 
+
+--Create a basic temporary table from work done in Topic 4, question 5 and call it "MyTempTable." Write a SELECT statement to query the new data.
+
+---CREATE TEMP TABLE
+SELECT ProductID, SalesOrderID, OrderQty as Quantity
+INTO #MyTempTable
+FROM Sales.SalesOrderDetail
+WHERE ProductID = '723'
+
+---SELECT STATEMENT TO QUERY TEMP TABLE
+SELECT *
+FROM #MyTempTable
+
+--Order the results on MyTempTable by SalesOrderID.
+
+SELECT *
+FROM #MyTempTable
+ORDER BY SalesOrderID
+
+--Add a timestamp field called "DateRan" and update it to the current date.
+
+---ALTER TABLE to Add DateRan
+ALTER TABLE #MyTempTable
+ADD DateRan datetime
+
+---Update to Current Date
+UPDATE #MyTempTable
+SET DateRan = '4/12/2023'
+
+--Explain how to drop the table and start over.
+
+---DROP TABLE
+DROP TABLE #MyTempTable
+
+---START OVER
+SELECT ProductID, SalesOrderID, OrderQty as Quantity, '04/12/2023' as DateRan
+INTO #MyTempTable
+FROM Sales.SalesOrderDetail
+WHERE ProductID = '723'
+ORDER BY SalesOrderID
+
+--Explain how the table can be re-added?
+
+---CREATE TABLE
+CREATE TABLE #MyTempTable (
+ProductID int,
+SalerOrderID int,
+Quantity smallint,
+DateRan datetime)
+
+---INSERT INTO
+INSERT INTO #MyTempTable
+SELECT ProductID, SalesOrderID, OrderQty [Quantity], '04/12/2023' [DateRan]
+FROM Sales.SalesOrderDetail
+WHERE ProductID = '723'
+ORDER BY SalesOrderID
