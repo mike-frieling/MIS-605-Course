@@ -1,1 +1,41 @@
+--SQL Server - AdventureWorks 2014 Database
 
+
+--Combine MyProduct and MyPriceHistory displaying the fields into a new temporary table called MyProductPriceHistory.
+--Display ProductID, Name, EndDate, and ListPrice.
+
+SELECT p.ProductID, p.Name, h.EndDate, h.ListPrice
+INTO #MyProductPriceHistory
+FROM #MyProduct p
+JOIN #MyPriceHistory h 
+  ON p.ProductID = h.ProductID
+
+
+SELECT *
+FROM #MyProductPriceHistory
+
+--Combine MyProduct and MySalesOrderDetail displaying the fields into a new temporary table called MySalesOrderDetailbyName. 
+--Display ProductID, Name, SalesOrderID, and Quantity.
+
+SELECT p.ProductID, p.Name, o.SalesOrderID, o.Quantity
+INTO #MySalesOrderDetailByName
+FROM #MyProduct p
+JOIN #MySalesOrderDetail o 
+  ON p.ProductID = o.ProductID
+
+SELECT *
+FROM #MySalesOrderDetailByName
+
+--Combine MySalesOrderDetailbyName and ALLSalesOrderDates displaying the fields into a new temporary table called MySalesOrderDetailbyDate. 
+--Display ProductID, Name, OrderDate, and SumOfQuantity. This will require you using the SUM and GROUP BY statements.
+
+SELECT dn.ProductID, dn.Name, od.OrderDate, SUM(dn.Quantity) as SumOfQuantity
+INTO #MySalesOrderDetailByDate 
+FROM #MySalesOrderDetailByName dn
+JOIN #AllSalesOrderDates od
+  ON dn.SalesOrderID = od.SalesOrderID
+GROUP BY dn.ProductID, dn.Name, od.OrderDate
+
+SELECT *
+FROM #MySalesOrderDetailByDate
+ORDER BY OrderDate
