@@ -1,1 +1,47 @@
+--SQL Server - AdventureWorks 2014 Database
 
+
+--The business problem that was presented by my manager was that the company is losing money on its popular model “LL Road Frame – Black 60” and 
+--they cannot determine why sales are down. 
+--The data requested was to be used to find out why the sales were down for “LL Road Frame – Black 60”. I wanted to look at all data around the 
+--product including order quantity, order dates, list pricing, and actual sales order price that the product was sold for.
+
+---1st Query
+SELECT 
+	p.ProductID
+	, p.Name
+	, ISNULL (ph.EndDate, getdate()) as EndDate 
+	, ph.ListPrice
+FROM 
+	Production.Product p
+	INNER JOIN Production.ProductListPriceHistory ph ON (p.ProductID = ph.ProductID)
+WHERE 
+	p.ProductID = '723';
+
+
+---2nd Query
+SELECT
+	od.SalesOrderID
+	, od.ProductID
+	, od.OrderQty
+	, od.UnitPrice
+	, oh.OrderDate
+FROM Sales.SalesOrderDetail od INNER JOIN Sales.SalesOrderHeader oh 
+		ON od.SalesOrderID = oh.SalesOrderID
+WHERE od.ProductID = '723'
+  ORDER BY oh.OrderDate
+
+
+---3rd Query
+SELECT
+	p.ProductID
+	, p.Name
+	, ISNULL(oh.OrderDate, getdate()) as OrderDate
+	, SUM(od.OrderQty) as SumOfQuantity
+FROM 
+	Production.Product p INNER JOIN Sales.SalesOrderDetail od ON (p.ProductID = od.ProductID)
+	INNER JOIN Sales.SalesOrderHeader oh ON (od.SalesOrderID = oh.SalesOrderID)
+WHERE 
+	p.ProductID = '723'
+GROUP BY 
+	p.ProductID, p.name, oh.OrderDate;
