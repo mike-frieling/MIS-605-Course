@@ -1,0 +1,37 @@
+--SQL Server - AdventureWorks 2014 Database
+
+
+--Label one as PriceHistory723.
+
+CREATE PROCEDURE PriceHistory723
+AS 
+SELECT
+	p.ProductID
+	, p.Name
+	, ph.EndDate
+	, ph.ListPrice
+FROM Production.Product p INNER JOIN Production.ProductListPriceHistory ph
+	ON p.ProductID = ph.ProductID
+WHERE p.ProductID = '723'
+
+
+EXEC PriceHistory723
+
+--Label the other as SalesOrderDetailbyDate723.
+
+CREATE PROCEDURE SalesOrderDetailbyDate723
+AS
+SELECT
+	p.ProductID
+	, p.Name
+	, oh. OrderDate
+	, SUM(od.OrderQty) as 'SumOfQuantity'
+FROM Production.Product p INNER JOIN Sales.SalesOrderDetail od
+	ON p.ProductID = od.ProductID
+	INNER JOIN Sales.SalesOrderHeader oh
+	ON od.SalesOrderID = oh.SalesOrderID
+WHERE p.ProductID = '723'
+GROUP BY p.ProductID, p.Name, oh.OrderDate
+
+
+EXEC SalesOrderDetailbyDate723
