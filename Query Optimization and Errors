@@ -1,1 +1,78 @@
+--SQL Server - AdventureWorks 2014 Database
 
+
+--Using what you have learned, replicate the data found in #MySalesOrderDetailbyDate and #MyProductPriceHistory using a single SELECT statement for
+--each query. Refer to the Topic 5 assignment, "Creating an Entity Relationship Diagram (ERD)" for this information.
+
+---MyProductPriceHistory
+SELECT pp.ProductID, pp.Name, ISNULL(ph.EndDate, getdate()) as EndDate, 
+	ph.ListPrice
+INTO #MyProductPriceHistory
+FROM Production.ProductListPriceHistory ph
+INNER JOIN Production.Product pp
+	ON ph.ProductID = pp.ProductID
+WHERE pp.ProductID = '723'
+
+SELECT *
+FROM #MyProductPriceHistory
+
+---MySalesOrderDetailbyDate
+SELECT pp.ProductID, pp.Name, ISNULL(oh.OrderDate, getdate()) as OrderDate, SUM(od.OrderQty) as SumOfQuantity
+INTO #MySalesOrderDetailbyDate
+FROM Production.Product pp
+INNER JOIN Sales.SalesOrderDetail od
+	ON pp.ProductID = od.ProductID
+INNER JOIN Sales.SalesOrderHeader oh
+	ON od.SalesOrderID = oh.SalesOrderID
+WHERE pp.ProductID = '723'
+GROUP BY pp.ProductID, pp.name, oh.OrderDate
+
+SELECT *
+FROM #MySalesOrderDetailbyDate
+
+--Modify the <MyProductPriceHistory and #MySalesOrderDetailbyDate> queries completed in the Topic 6 assignment and present it in an easy-to-read
+--format. To do this, write the query in a single SELECT statement without temporary tables, using abbreviations and line spacing.
+
+---MyProductPriceHistory
+SELECT 
+	p.ProductID
+	, p.Name
+	, ISNULL (ph.EndDate, getdate()) as EndDate 
+	, ph.ListPrice
+FROM 
+	Production.Product p
+	INNER JOIN Production.ProductListPriceHistory ph ON (p.ProductID = ph.ProductID)
+WHERE 
+	p.ProductID = '723';
+
+---MySalesOrderDetailbyDate
+SELECT
+	p.ProductID
+	, p.Name
+	, ISNULL(oh.OrderDate, getdate()) as OrderDate
+	, SUM(od.OrderQty) as SumOfQuantity
+FROM 
+	Production.Product p INNER JOIN Sales.SalesOrderDetail od ON (p.ProductID = od.ProductID)
+	INNER JOIN Sales.SalesOrderHeader oh ON (od.SalesOrderID = oh.SalesOrderID)
+WHERE 
+	p.ProductID = '723'
+GROUP BY 
+	p.ProductID, p.name, oh.OrderDate;
+
+--Karen Berge, a document control assistant at the company, comes to you with a request. Karen wants the titles and file names of all of the 
+--documents she has produced and has asked you to generate this information for her. Using what you have learned, produce a query in one statement 
+--to give her the information she needs. Note that constructing the query will require some thinking outside the box since the relationships are not 
+--well-documented.
+
+SELECT
+	p.BusinessEntityID
+	, p.FirstName
+	, p.MiddleName
+	, p.LastName
+	, d.Owner as DocumentOwner
+	, d.Title
+	, d.FileName
+FROM
+	Production.Document as d INNER JOIN Person.Person as p ON (d.Owner = p.BusinessEntityID)
+WHERE
+	d.Owner = '220';
