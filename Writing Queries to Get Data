@@ -1,0 +1,34 @@
+--SQL Server - AdventureWorks 2014 Database
+
+
+--Find the product ID for the LL Road Frame – Black 60.
+
+SELECT ProductID, name
+FROM Production.Product
+WHERE name = 'LL Road Frame - Black, 60'
+
+--Find the listing prices for the LL Road Frame Black 60. Include the ProductID, EndDate, and ListPrice.
+
+SELECT pp.ProductID, pc.EndDate, pp.ListPrice
+FROM Production.Product pp, Production.ProductCostHistory pc
+WHERE pp.ProductID = '723' and pp.productID = pc.ProductID
+
+--How would you rewrite the query used in question 2 to exclude NULL values?
+
+SELECT pp.ProductID, pc.EndDate, pp.ListPrice
+FROM Production.Product pp, Production.ProductCostHistory pc
+WHERE pp.ProductID = '723' and pp.productID = pc.ProductID and EndDate IS NOT NULL
+
+--How many orders have been placed for LL Road Frame – Black 60?
+
+SELECT ProductID, SUM(OrderQTY)
+FROM Sales.SalesOrderDetail
+WHERE ProductID = '723'
+GROUP BY ProductID
+
+--Rename the OrderQty to Quantity in your results.
+
+SELECT ProductID, SUM(OrderQTY) as Quantity
+FROM Sales.SalesOrderDetail
+WHERE ProductID = '723'
+GROUP BY ProductID
